@@ -1,0 +1,1 @@
+db.auth.createIndex({ username: 1 }, { unique: true });
