@@ -17,10 +17,6 @@ export class AuthRepository extends BaseRepository {
         return this.context.findOne({ username: username });
     } 
 
-    getByInviteCode(code: string): Promise<UserAuth> {
-        return this.context.findOne({ inviteCode: code, virtual: true });
-    }
-
     update(auth: UserAuth): Promise<UserAuth> {
         console.log(`updating auth ${auth.oid}`);
         return super.updateObject(auth);

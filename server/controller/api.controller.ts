@@ -119,7 +119,7 @@ export class APIController extends BaseController {
 		if (!username) {
 			return this.sendError(res, 'username is required');
 		}
-		const data = await this.authService.invite(username);
+		const data = await this.authService.invite(username, req.session.user.oid);
 		res.send(data);
 	}
 

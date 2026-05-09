@@ -1,6 +1,7 @@
 
 import { Bootstrap, Injectable } from '../config/bootstrap';
 import { AuthRepository } from '../repository/auth.repository';
+import { InviteRepository } from '../repository/invite.repository';
 import { LoginCodeRepository } from '../repository/login-code.repository';
 
 import { ApiResponse, BaseService } from './base.service';
@@ -8,6 +9,7 @@ import { AppService } from './app.service';
 import { EmailService } from './email.service';
 
 import { UserAuth } from '../../model/auth.model';
+import { Invite } from '../../model/invite.model';
 import { LoginCode, LoginCodePurpose } from '../../model/login-code.model';
 import { Email } from '../../model/email.model';
 import { PasswordUtility } from '../../utility/password.utility';
@@ -25,6 +27,7 @@ export class AuthService extends BaseService {
     constructor(
         protected appService: AppService,
         protected authRepository: AuthRepository,
+        protected inviteRepository: InviteRepository,
         protected loginCodeRepository: LoginCodeRepository,
         protected emailService: EmailService
     ) {
@@ -165,48 +168,55 @@ export class AuthService extends BaseService {
         return this.login(auth, password, bypassPassword);
     }
 
-    async invite(username: string): Promise<ApiResponse<null>> {
+    async invite(username: string, invitedBy: string): Promise<ApiResponse<null>> {
         const auth = await this.authRepository.getByUsername(username);
         if (auth && !auth.virtual) {
             return new ApiResponse(false, null, 'user already exists');
         }
 
+        if (!auth) {
+            const userAuth = new UserAuth(username, '');
+            userAuth.virtual = true;
+            await this.authRepository.update(userAuth);
+        }
+
         const inviteCode = Common.uniqueId();
         const inviteExpiry = Date.now() + 7 * 24 * 60 * 60 * 1000;
 
-        let userAuth: UserAuth;
-        if (auth?.virtual) {
-            userAuth = auth;
-            userAuth.inviteCode = inviteCode;
-            userAuth.inviteExpiry = inviteExpiry;
+        const existing = await this.inviteRepository.getByUsername(username);
+        let invite: Invite;
+        if (existing) {
+            existing.inviteCode = inviteCode;
+            existing.inviteExpiry = inviteExpiry;
+            existing.invitedBy = invitedBy;
+            invite = existing;
         } else {
-            userAuth = new UserAuth(username, '');
-            userAuth.virtual = true;
-            userAuth.inviteCode = inviteCode;
-            userAuth.inviteExpiry = inviteExpiry;
+            invite = new Invite(username, inviteCode, inviteExpiry, invitedBy);
         }
-
-        await this.authRepository.update(userAuth);
+        await this.inviteRepository.save(invite);
 
         const email: Email = {
             to: [username],
             subject: "You've been invited",
             html: `<p>You've been invited to join. Click the link below to get started.</p><p><a href="${Config.APP_URL}/invite?code=${inviteCode}">Accept Invite</a></p>`
         };
-        this.emailService.sendEmail(email, userAuth.oid as string);
+        this.emailService.sendEmail(email, invitedBy);
 
         return new ApiResponse(true, null);
     }
 
     async redeemInviteCode(code: string): Promise<ApiResponse<UserAuth>> {
-        const auth = await this.authRepository.getByInviteCode(code);
-        if (!auth) {
+        const invite = await this.inviteRepository.getByCode(code);
+        if (!invite) {
             return new ApiResponse(false, null, 'invalid invite code');
         }
-        if (Date.now() > auth.inviteExpiry) {
+        if (Date.now() > invite.inviteExpiry) {
             return new ApiResponse(false, null, 'invite code has expired');
         }
-        delete auth.password;
+        const auth = await this.authRepository.getByUsername(invite.username);
+        if (!auth || !auth.virtual) {
+            return new ApiResponse(false, null, 'invalid invite code');
+        }
         return new ApiResponse(true, auth);
     }
 
@@ -216,8 +226,6 @@ export class AuthService extends BaseService {
         if (existingAuth) {
             existingAuth.password = hash;
             delete existingAuth.virtual;
-            delete existingAuth.inviteCode;
-            delete existingAuth.inviteExpiry;
             auth = await this.authRepository.update(existingAuth);
         } else {
             auth = await this.authRepository.update(new UserAuth(username, hash));

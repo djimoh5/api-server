@@ -5,8 +5,6 @@ export class UserAuth {
     oid: authid;
     token?: string;
     virtual?: boolean;
-    inviteCode?: string;
-    inviteExpiry?: number;
 
     constructor(public username: string, public password: string) {
         this.oid = AuthId(Common.uniqueId());
