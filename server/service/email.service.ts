@@ -5,7 +5,7 @@ import { EmailTemplate, Email, EmailTemplateTypes, BaseEmail, EMAIL_ATTACHMENT_M
 import { Config } from '../config/config';
 import { Bootstrap, Injectable } from '../config/bootstrap';
 
-import { EmailLogRepository } from '../respository/email-log.repository';
+import { EmailLogRepository } from '../repository/email-log.repository';
 
 import { AppService } from '../service/app.service';
 import { HttpService } from '../service/http.service';

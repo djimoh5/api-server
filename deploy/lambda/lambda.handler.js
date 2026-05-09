@@ -1,5 +1,5 @@
 const serverless = require('serverless-http')
-const Database = require('../database/database').Database;
+const Database = require('../server/database/database').Database;
 
 module.exports = function (app) { //express app
     const handler = serverless(app);

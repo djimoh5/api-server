@@ -1,4 +1,4 @@
-import { ErrorLogRepository } from "../respository/error-log.repository";
+import { ErrorLogRepository } from "../repository/error-log.repository";
 import { ErrorType } from '../../model/error.model';
 import { Bootstrap, Injectable } from "../config/bootstrap";
 

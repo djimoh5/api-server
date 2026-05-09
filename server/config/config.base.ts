@@ -32,6 +32,7 @@ export class BaseConfig {
     };
 
     static APP_INDEX_PAGE = '/dist/index.html';
+    static APP_URL = '';
 
     /*** ACCESS KEYS ***/
     static MANDRILL_API_KEY = '';

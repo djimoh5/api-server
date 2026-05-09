@@ -8,14 +8,7 @@ else
     echo "Version $version"
 fi
 
-if [ "$2" = '--no-install' ] || [ "$2" = '--skip-install' ]
-then
-    echo "Skip install"
-    cd ../
-else
-    cd ../
-    sh ./npm-install.sh
-fi
+sh ./npm-install.sh
 
 #update version numbers
 cd deploy
@@ -28,20 +21,10 @@ tsc -p server
 echo "Transpiling complete"
 
 cp --parents server/package.json build
-cp --parents config/secure.config.json build
-cp --parents config/app_secret_private.pem build
-cp --parents config/app_secret_public.pem build
-cp --parents lib/*.js build
-
-if [ "$2" = '--no-install' ]
-then
-    echo "No install"
-else
-    cp npm-install.sh build
-    cd build
-    sh ./npm-install.sh --production
-
-    cd ../
-fi
+cp --parents server/config/secure.config.json build
+cp --parents server/config/app_secret_private.pem build
+cp --parents server/config/app_secret_public.pem build
+cp --parents server/lib/*.js build
 
 cd build
+npm install --production

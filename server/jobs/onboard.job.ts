@@ -2,6 +2,7 @@ import { DeployConfig } from '../config/deploy.config';
 
 import { S3Service } from '../service/s3.service';
 import { CloudFrontService } from '../service/cloudfront.service';
+import { ApiGatewayService } from '../service/apigateway.service';
 
 import { ACM } from "@aws-sdk/client-acm";
 import { CreateDistributionCommandInput, Distribution } from '@aws-sdk/client-cloudfront';
@@ -15,7 +16,7 @@ import { Job } from '../../model/job.model';
 export class AppOnboardJob extends Job {
     acm: ACM;
 
-    constructor(private s3Service: S3Service, private cloudFrontService: CloudFrontService) {
+    constructor(private s3Service: S3Service, private cloudFrontService: CloudFrontService, private apiGatewayService: ApiGatewayService) {
         super('AppOnboard');
 
         process.env.AWS_ACCESS_KEY_ID = DeployConfig.AWS_ACCESS_KEY;
@@ -176,5 +177,20 @@ export class AppOnboardJob extends Job {
         else {
             throw res.data;
         }
+    }
+
+    async createApiGateway(sourceApiName: string, newApiName: string, lambdaArn: string) {
+        const sourceApi = await this.apiGatewayService.getRestApiByName(sourceApiName);
+        if (!sourceApi?.id) {
+            throw new Error(`Source API Gateway "${sourceApiName}" not found`);
+        }
+
+        console.log(`Cloning API Gateway "${sourceApiName}" (${sourceApi.id}) -> "${newApiName}"`);
+        const res = await this.apiGatewayService.cloneApi(sourceApi.id, newApiName, lambdaArn);
+        if (!res.success) {
+            throw new Error(`Failed to create API Gateway: ${res.msg}`);
+        }
+
+        return res.data;
     }
 }

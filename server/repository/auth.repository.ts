@@ -9,13 +9,17 @@ export class AuthRepository extends BaseRepository {
         super('agent_auth');
     }
 
-    getByUsername(username: string): Promise<UserAuth[]> {
+    getByUsername(username: string): Promise<UserAuth> {
         return this.context.findOne({ username: username }, { password: 0 });
     }
 
-    getByUsernameWithCredentials(username: string): Promise<UserAuth[]> {
-        return this.context.find({ username: username });
+    getByUsernameWithCredentials(username: string): Promise<UserAuth> {
+        return this.context.findOne({ username: username });
     } 
+
+    getByInviteCode(code: string): Promise<UserAuth> {
+        return this.context.findOne({ inviteCode: code, virtual: true });
+    }
 
     update(auth: UserAuth): Promise<UserAuth> {
         console.log(`updating auth ${auth.oid}`);

@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(git:*)",
+      "Bash(node -e \":*)",
+      "ls",
+      "find",
+      "grep"
+    ]
+  },
+  "autoMemoryDirectory": ".claude/memory"
+}

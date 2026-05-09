@@ -1,5 +1,5 @@
-echo $PWD
-npm install
+#echo $PWD
+#npm install
 
 cd server
 echo $PWD

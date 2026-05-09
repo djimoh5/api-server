@@ -7,16 +7,11 @@ if [ "$2" = "--no-build" ] || [ "$3" = "--no-build" ]
 then
     echo "Skipping Build"
 else
-    sh ./ui.build.sh $1 $2
+    sh ./ui.build.sh $1
 fi
-cd ../
+cd ../server
 
-if [ "$2" = "static-build-number" ] || [ "$2" = "--no-build" ]
-then
-    ts-node jobs/deploy.app.ts --$1 --platform $3
-else
-    ts-node jobs/deploy.app.ts --$1 --platform $2
-fi
+npx ts-node --project tsconfig.json jobs/deploy.app.ts --$1
 
 cd ./ui
 

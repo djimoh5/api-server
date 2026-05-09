@@ -5,7 +5,7 @@ mkdir -p ../build/lambda
 cp lambda/* ../build/lambda
 cp lambda/serverless.$1.yml ../build/serverless.yml
 
-cp ../package.json ../build
+cp ../server/package.json ../build
 
 cd ../build
 npm install --production

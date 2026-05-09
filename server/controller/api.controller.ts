@@ -65,4 +65,77 @@ export class APIController extends BaseController {
 
 		res.send(data);
 	}
+
+	@NoAuth()
+	@Post('auth/code/request')
+	async requestLoginCode(req: Request, res: Response) {
+		const { username } = req.body;
+		if (!username) {
+			return this.sendError(res, 'username is required');
+		}
+		const data = await this.authService.requestLoginCode(username);
+		res.send(data);
+	}
+
+	@NoAuth()
+	@Post('auth/code/verify')
+	async verifyLoginCode(req: Request, res: Response) {
+		const { username, code } = req.body;
+		if (!username || !code) {
+			return this.sendError(res, 'username and code are required');
+		}
+		const data = await this.authService.verifyLoginCode(username, code);
+		if (data.success) {
+			req.session.start(data.data);
+		}
+		res.send(data);
+	}
+
+	@NoAuth()
+	@Post('auth/password/reset/request')
+	async requestPasswordReset(req: Request, res: Response) {
+		const { username } = req.body;
+		if (!username) {
+			return this.sendError(res, 'username is required');
+		}
+		const data = await this.authService.requestPasswordReset(username);
+		res.send(data);
+	}
+
+	@NoAuth()
+	@Post('auth/password/reset/confirm')
+	async resetPassword(req: Request, res: Response) {
+		const { username, code, newPassword } = req.body;
+		if (!username || !code || !newPassword) {
+			return this.sendError(res, 'username, code, and newPassword are required');
+		}
+		const data = await this.authService.resetPassword(username, code, newPassword);
+		res.send(data);
+	}
+
+	@Post('auth/invite')
+	async invite(req: Request, res: Response) {
+		const { username } = req.body;
+		if (!username) {
+			return this.sendError(res, 'username is required');
+		}
+		const data = await this.authService.invite(username);
+		res.send(data);
+	}
+
+	@NoAuth()
+	@Post('auth/invite/redeem')
+	async redeemInvite(req: Request, res: Response) {
+		const { code } = req.body;
+		if (!code) {
+			return this.sendError(res, 'code is required');
+		}
+		const data = await this.authService.redeemInviteCode(code);
+		if (data.success) {
+			req.session.user = data.data;
+			await this.init(req);
+			req.session.start(data.data);
+		}
+		res.send(data);
+	}
 }
