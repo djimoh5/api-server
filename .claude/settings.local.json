@@ -4,9 +4,7 @@
       "Bash(ls:*)",
       "Bash(git:*)",
       "Bash(node -e \":*)",
-      "ls",
-      "find",
-      "grep"
+      "Read(//c/dev/api-server/server/config/**)"
     ]
   },
   "autoMemoryDirectory": ".claude/memory"

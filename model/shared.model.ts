@@ -1,5 +1,7 @@
+import { uniqueid } from './id.model';
+
 export interface BaseModel {
-    oid?: string;
+    oid?: uniqueid;
 }
 
 export interface GenericMap<T> { 

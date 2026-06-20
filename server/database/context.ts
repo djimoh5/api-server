@@ -2,7 +2,7 @@ import { Database, Collection, DBModel, DatabaseConnection } from './database';
 import { Operations, UpdateOptions, SortOrder } from './operations';
 import { IDatabaseContext, IDatabaseContextOptions } from './icontext';
 import { PaginationModel } from '../../model/shared.model';
-import { uniqueMd5Id } from '../../model/id.model';
+import { uniqueid } from '../../model/id.model';
 import { Common } from '../../utility/common';
 import { Filter } from 'mongodb';
 
@@ -11,7 +11,7 @@ export class DatabaseContext implements IDatabaseContext {
 	protected auditCollection?: Collection;
 	private databaseOpenedPromise: Promise<any>;
 	private dbType: DatabaseConnection;
-	private auditLogRequests: { promise: Promise<any>, id: uniqueMd5Id }[] = [];
+	private auditLogRequests: { promise: Promise<any>, id: uniqueid }[] = [];
 
 	constructor(public collectionName: string, private options: IDatabaseContextOptions = {}) {
 		if (collectionName.startsWith('audit.')){

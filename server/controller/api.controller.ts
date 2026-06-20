@@ -1,17 +1,19 @@
-import { BaseController, Post, Request, Response, AllowAnonymous, NoAuth } from './base.controller';
+import { BaseController, Get, Post, Request, Response, AllowAnonymous, NoAuth } from './base.controller';
 
 import { Bootstrap, Injectable } from '../config/bootstrap';
 
 import { AuthService } from '../service/auth.service';
+import { UserProfileService } from '../service/user-profile.service';
 
 import { ApiResponse } from '../../model/shared.model';
 import { UserAuth } from '../../model/auth.model';
+import { AuthId } from '../../model/id.model';
 
 @Injectable()
 @Bootstrap()
 @AllowAnonymous()
 export class APIController extends BaseController {
-	constructor(private authService: AuthService) {
+	constructor(private authService: AuthService, private userProfileService: UserProfileService) {
 		super();
 	}
 
@@ -92,7 +94,7 @@ export class APIController extends BaseController {
 	}
 
 	@NoAuth()
-	@Post('auth/password/reset/request')
+	@Post('auth/password/reset')
 	async requestPasswordReset(req: Request, res: Response) {
 		const { username } = req.body;
 		if (!username) {
@@ -110,6 +112,22 @@ export class APIController extends BaseController {
 			return this.sendError(res, 'username, code, and newPassword are required');
 		}
 		const data = await this.authService.resetPassword(username, code, newPassword);
+		res.send(data);
+	}
+
+	@Get('user/profile')
+	async getProfile(req: Request, res: Response) {
+		const data = await this.userProfileService.getProfile(AuthId(req.session.user.oid));
+		res.send(data);
+	}
+
+	@Post('user/profile')
+	async updateProfile(req: Request, res: Response) {
+		const { firstName, lastName } = req.body;
+		if (!firstName || !lastName) {
+			return this.sendError(res, 'firstName and lastName are required');
+		}
+		const data = await this.userProfileService.updateProfile(AuthId(req.session.user.oid), firstName, lastName);
 		res.send(data);
 	}
 

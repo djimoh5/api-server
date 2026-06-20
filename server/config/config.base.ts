@@ -1,5 +1,6 @@
 export class BaseConfig {
     static ENVIRONMENT = 'dev';
+    static APP_NAME = 'APP_NAME';
 
     static SERVER_NAME = 'local';
     static SERVER_PORT = 8080;
@@ -19,7 +20,7 @@ export class BaseConfig {
     };
 
     static EMAIL = {
-        tag: 'mahjong',
+        tag: 'app_name',
         from: '',
         fromName: '',
         admin: ['']
@@ -35,6 +36,10 @@ export class BaseConfig {
     static APP_URL = '';
 
     /*** ACCESS KEYS ***/
+    static OPEN_AI_KEY = '';
+    static GEMINI_API_KEY = '';
+    static CLAUDE_API_KEY = '';
+    
     static MANDRILL_API_KEY = '';
     static MANDRILL = {
         API_URL: 'https://mandrillapp.com/api/1.0'

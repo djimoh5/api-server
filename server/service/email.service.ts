@@ -403,6 +403,6 @@ export class EmailService extends BaseService {
     }
 
     private getTestInfo(to: string[], cc: string[], bcc: string[], environment: string) {
-        return `To: ${to.join('; ')}${cc && cc.length > 0 ? (', CC: ' + cc.join('; ')) : ''}${bcc && bcc.length > 0 ? (', BCC: ' + bcc.join('; ')) : ''}, Env: ${environment})`;
+        return ` (To: ${to.join('; ')}${cc && cc.length > 0 ? (', CC: ' + cc.join('; ')) : ''}${bcc && bcc.length > 0 ? (', BCC: ' + bcc.join('; ')) : ''}, Env: ${environment})`;
     }
 }

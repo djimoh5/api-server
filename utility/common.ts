@@ -1,4 +1,4 @@
-import { uniqueMd5Id } from "../model/id.model";
+import { uniqueid, uniqueMd5Id } from "../model/id.model";
 const { v4: uuidv4 } = require('uuid');
 
 declare const md5: any;
@@ -469,11 +469,11 @@ export class Common {
         return parseInt('' + Math.round(Math.random() * 10000000) + Math.round(Math.random() * 10000000));
     }
 
-	static uniqueId(): uniqueMd5Id {
+	static uniqueId(): uniqueid {
 		return uuidv4();
     }
 
-    static uniqueMd5(data?: string) {
+    static uniqueMd5(data?: string): uniqueMd5Id {
         return md5(data ? data : ("" + Date.now() + Math.round(Math.random() * 1000000) + Math.round(Math.random() * 1000000)));
     }
 

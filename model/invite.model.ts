@@ -1,5 +1,5 @@
 import { Common } from "../utility/common";
-import { uniqueid, UniqueId } from "./id.model";
+import { uniqueid } from "./id.model";
 
 export class Invite {
     oid: uniqueid;
@@ -10,6 +10,6 @@ export class Invite {
         public inviteExpiry: number,
         public invitedBy: string
     ) {
-        this.oid = UniqueId(Common.uniqueId());
+        this.oid = Common.uniqueId();
     }
 }

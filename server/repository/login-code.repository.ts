@@ -1,6 +1,6 @@
 import { Bootstrap, Injectable } from "../config/bootstrap";
 import { BaseRepository } from "./base.repository";
-import { LoginCode, LoginCodePurpose } from "../../model/login-code.model";
+import { LoginCode, LoginCodePurpose } from "../../model/auth.model";
 
 @Injectable()
 @Bootstrap()
@@ -18,6 +18,6 @@ export class LoginCodeRepository extends BaseRepository {
     }
 
     save(loginCode: LoginCode): Promise<LoginCode> {
-        return super.updateObject(loginCode);
+        return this.context.update( { username: loginCode.username, used: false, purpose: loginCode.purpose }, loginCode, null, { upsert: true });
     }
 }
