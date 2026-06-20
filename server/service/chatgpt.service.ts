@@ -8,7 +8,7 @@ import { ApiResponse } from './base.service';
 import { AppService } from './app.service';
 
 //import { WebIntegrations } from '../../../model/error.model';
-import { ChatGPTCompletion, ChatGPTCompletionChoice, ChatGPTMessage, ChatGPTAPICallConfig, ChatGPTTool, AICompletionOptions, AIMaxTokens, AIToolChoice, ChatGPTWebSearchResponse } from '../model/ai.model';
+import { ChatGPTCompletion, ChatGPTCompletionChoice, ChatGPTMessage, ChatGPTAPICallConfig, ChatGPTTool, AICompletionOptions, AIMaxTokens, AIToolChoice, ChatGPTWebSearchResponse } from '../../model/ai.model';
 //import { userid } from '../../../model/user.model';
 
 import { Config } from '../config/config';

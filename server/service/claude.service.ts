@@ -7,7 +7,7 @@ import { HttpService, PostOptions } from './http.service';
 import { ApiResponse } from './base.service';
 import { AppService } from './app.service';
 
-import { ChatGPTCompletionChoice, ChatGPTTool, AICompletionOptions, AIMessage, ChatGPTMessage, AIToolChoice, AIMaxTokens, ClaudeAPICallConfig, ClaudeCompletion, ClaudeMessage, ClaudeTool, ClaudeToolChoice } from '../model/ai.model';
+import { ChatGPTCompletionChoice, ChatGPTTool, AICompletionOptions, AIMessage, ChatGPTMessage, AIToolChoice, AIMaxTokens, ClaudeAPICallConfig, ClaudeCompletion, ClaudeMessage, ClaudeTool, ClaudeToolChoice } from '../../model/ai.model';
 
 import { Config } from '../config/config';
 import { IAIService, AIServiceToken } from './iai.service';
