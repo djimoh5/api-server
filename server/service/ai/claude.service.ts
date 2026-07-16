@@ -1,18 +1,18 @@
 
-import { Bootstrap, Injectable } from '../config/bootstrap';
+import { Bootstrap, Injectable } from '../../config/bootstrap';
 
-import { SharedRepository } from '../repository/shared.repository';
+import { SharedRepository } from '../../repository/ai/shared.repository';
 
-import { HttpService, PostOptions } from './http.service';
-import { ApiResponse } from './base.service';
-import { AppService } from './app.service';
+import { HttpService, PostOptions } from '../http.service';
+import { ApiResponse } from '../base.service';
+import { AppService } from '../app.service';
 
-import { ChatGPTCompletionChoice, ChatGPTTool, AICompletionOptions, AIMessage, ChatGPTMessage, AIToolChoice, AIMaxTokens, ClaudeAPICallConfig, ClaudeCompletion, ClaudeMessage, ClaudeTool, ClaudeToolChoice } from '../../model/ai.model';
+import { ChatGPTCompletionChoice, ChatGPTTool, AICompletionOptions, AIMessage, ChatGPTMessage, AIToolChoice, AIMaxTokens, ClaudeAPICallConfig, ClaudeCompletion, ClaudeMessage, ClaudeTool, ClaudeToolChoice } from '../../../model/ai.model';
 
-import { Config } from '../config/config';
+import { Config } from '../../config/config';
 import { IAIService, AIServiceToken } from './iai.service';
 import { BaseAIService } from './base-ai.service';
-import { authid } from '../../model/id.model';
+import { authid } from '../../../model/id.model';
 
 const util = require('util');
 

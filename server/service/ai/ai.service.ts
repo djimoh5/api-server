@@ -1,16 +1,16 @@
 import { Inject, Injectable } from 'injection-js';
-import { Bootstrap } from '../config/bootstrap';
-import { SharedRepository } from '../repository/shared.repository';
+import { Bootstrap } from '../../config/bootstrap';
+import { SharedRepository } from '../../repository/ai/shared.repository';
 
-import { AIAgent, AIMessage, AICompletionOptions, ChatGPTTool, AIToolChoice, AIModel } from '../../model/ai.model';
-import { ApiResponse } from './base.service';
-import { AppService } from './app.service';
+import { AIAgent, AIMessage, AICompletionOptions, ChatGPTTool, AIToolChoice, AIModel } from '../../../model/ai.model';
+import { ApiResponse } from '../base.service';
+import { AppService } from '../app.service';
 import { ChatGPTService } from './chatgpt.service';
 import { GeminiService } from './gemini.service';
 import { ClaudeService } from './claude.service';
 import { AIServiceToken, IAIService } from './iai.service';
 import { BaseAIService } from './base-ai.service';
-import { authid } from '../../model/id.model';
+import { authid } from '../../../model/id.model';
 
 export const services = [ChatGPTService, GeminiService, ClaudeService]; //referenced only so they get bootstrapped...maybe a better way?
 

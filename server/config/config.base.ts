@@ -13,10 +13,10 @@ export class BaseConfig {
     static APP_API_SECRET = '';
 
     static MONGO_CONNECTIONS = {
-        APP: { ip: '127.0.0.1:27017', db: 'mahjong', user: '', password: '' },
-        AUDIT: { ip: '127.0.0.1:27017', db: 'mahjong', user: '', password: '' },
-        LOG: { ip: '127.0.0.1:27017', db: 'mahjong', user: '', password: '' },
-        WAREHOUSE: { ip: '127.0.0.1:27017', db: 'mahjong', user: '', password: '' },
+        APP: { ip: '127.0.0.1:27017', db: '', user: '', password: '' },
+        AUDIT: { ip: '127.0.0.1:27017', db: '', user: '', password: '' },
+        LOG: { ip: '127.0.0.1:27017', db: '', user: '', password: '' },
+        WAREHOUSE: { ip: '127.0.0.1:27017', db: '', user: '', password: '' },
     };
 
     static EMAIL = {

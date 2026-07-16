@@ -1,21 +1,21 @@
 
-import { Bootstrap, Injectable } from '../config/bootstrap';
+import { Bootstrap, Injectable } from '../../config/bootstrap';
 
-import { SharedRepository } from '../repository/shared.repository';
+import { SharedRepository } from '../../repository/ai/shared.repository';
 
-import { HttpService, PostOptions } from './http.service';
-import { ApiResponse } from './base.service';
-import { AppService } from './app.service';
+import { HttpService, PostOptions } from '../http.service';
+import { ApiResponse } from '../base.service';
+import { AppService } from '../app.service';
 
 //import { WebIntegrations } from '../../../model/error.model';
-import { ChatGPTCompletionChoice, GeminiAPICallConfig, ChatGPTTool, AICompletionOptions, AIMessage, GeminiMessage, GeminiCompletion, ChatGPTToolCall, GeminiToolCall, GeminiToolChoice, AIToolChoice } from '../../model/ai.model';
+import { ChatGPTCompletionChoice, GeminiAPICallConfig, ChatGPTTool, AICompletionOptions, AIMessage, GeminiMessage, GeminiCompletion, ChatGPTToolCall, GeminiToolCall, GeminiToolChoice, AIToolChoice } from '../../../model/ai.model';
 //import { userid } from '../../../model/user.model';
 
-import { Config } from '../config/config';
+import { Config } from '../../config/config';
 import { IAIService, AIServiceToken } from './iai.service';
 import { BaseAIService } from './base-ai.service';
-import { authid } from '../../model/id.model';
-import { AIMaxTokens } from '../../model/ai.model';
+import { authid } from '../../../model/id.model';
+import { AIMaxTokens } from '../../../model/ai.model';
 
 const util = require('util');
 

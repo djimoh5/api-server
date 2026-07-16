@@ -226,7 +226,7 @@ export abstract class BaseController {
             if(scopedController.isAuthenticated(req, res, path, method)) {
                 try {
                     await scopedController.init(req);
-                    scopedController[methodName](req, res);
+                    await scopedController[methodName](req, res);
                 }
                 catch(err){
                     ErrorService.log(err, ErrorType.CaughtException);

@@ -1,8 +1,8 @@
 import { InjectionToken } from "injection-js";
-import { AIConversation } from "../../model/ai.model";
-import { ApiResponse } from "./base.service";
-import { AICompletionOptions, AIMessage, ChatGPTTool, AIToolChoice } from "../../model/ai.model";
-import { authid } from "../../model/id.model";
+import { AIConversation } from "../../../model/ai.model";
+import { ApiResponse } from "../base.service";
+import { AICompletionOptions, AIMessage, ChatGPTTool, AIToolChoice } from "../../../model/ai.model";
+import { authid } from "../../../model/id.model";
 
 export const AIServiceToken = new InjectionToken<IAIService>('IAIService');
 

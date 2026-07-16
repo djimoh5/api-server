@@ -1,11 +1,11 @@
-import { SharedRepository } from '../repository/shared.repository';
+import { SharedRepository } from '../../repository/ai/shared.repository';
 
-import { AIAgent, AIConversation, AIMessage, AICompletionOptions, ChatGPTTool, AIToolChoice, AIModel } from '../../model/ai.model';
-import { BaseService, ApiResponse } from './base.service';
-import { AppService } from './app.service';
-import { Common } from '../../utility/common';
+import { AIAgent, AIConversation, AIMessage, AICompletionOptions, ChatGPTTool, AIToolChoice, AIModel } from '../../../model/ai.model';
+import { BaseService, ApiResponse } from '../base.service';
+import { AppService } from '../app.service';
+import { Common } from '../../../utility/common';
 import { IAIService } from './iai.service';
-import { authid } from '../../model/id.model';
+import { authid } from '../../../model/id.model';
 
 export abstract class BaseAIService extends BaseService implements IAIService {
     protected defaultOptions: AICompletionOptions = {};

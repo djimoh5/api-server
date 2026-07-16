@@ -1,6 +1,6 @@
-import { Bootstrap, Injectable } from "../config/bootstrap";
-import { BaseRepository } from "./base.repository";
-import { AIContext } from "../../model/ai.model";
+import { Bootstrap, Injectable } from "../../config/bootstrap";
+import { BaseRepository } from "../base.repository";
+import { AIContext } from "../../../model/ai.model";
 
 @Injectable()
 @Bootstrap()

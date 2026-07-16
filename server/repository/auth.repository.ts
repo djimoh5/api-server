@@ -10,15 +10,18 @@ export class AuthRepository extends BaseRepository {
     }
 
     getByUsername(username: string): Promise<UserAuth> {
+        username = username.toLowerCase();
         return this.context.findOne({ username: username }, { password: 0 });
     }
 
     getByUsernameWithCredentials(username: string): Promise<UserAuth> {
+        username = username.toLowerCase();
         return this.context.findOne({ username: username });
     } 
 
     update(auth: UserAuth): Promise<UserAuth> {
         console.log(`updating auth ${auth.oid}`);
+        auth.username = auth.username.toLowerCase();
         return super.updateObject(auth);
     }
 

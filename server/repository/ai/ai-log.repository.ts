@@ -1,8 +1,8 @@
-import { Bootstrap, Injectable } from "../config/bootstrap";
-import { BaseRepository } from "./base.repository";
-import { DatabaseConnection } from "../database/database";
-import { AILog } from "../../model/log.model";
-import { SortOrder } from "../database/operations";
+import { Bootstrap, Injectable } from "../../config/bootstrap";
+import { BaseRepository } from "../base.repository";
+import { DatabaseConnection } from "../../database/database";
+import { AILog } from "../../../model/log.model";
+import { SortOrder } from "../../database/operations";
 
 @Injectable()
 @Bootstrap()

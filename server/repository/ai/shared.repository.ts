@@ -1,5 +1,5 @@
 
-import { Bootstrap, Injectable } from '../config/bootstrap';
+import { Bootstrap, Injectable } from '../../config/bootstrap';
 
 import { ConversationRepository } from './conversation.repository';
 import { AgentRepository } from './agent.repository';
