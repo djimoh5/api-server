@@ -36,6 +36,8 @@ export interface IDatabaseContext {
 }
 
 export interface IDatabaseContextOptions {
+    tenantId?: string;
+    searchGlobalObjects?: boolean;
     disableAuditLogs?: boolean;
     connection?: DatabaseConnection;
     explicitConnection?: boolean;

@@ -221,7 +221,7 @@ export abstract class BaseController {
             req.methodName = methodName;
 
             //console.log('PATH:', path, 'AGENT:', req.session.user.username);
-            const scopedController: BaseController = Injector.get(<any>this.constructor, req.session.user.oid);
+            const scopedController: BaseController = Injector.get(<any>this.constructor, req.session.tenantId);
             
             if(scopedController.isAuthenticated(req, res, path, method)) {
                 try {

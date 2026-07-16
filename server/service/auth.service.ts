@@ -224,7 +224,7 @@ export class AuthService extends BaseService {
 
         let userAuth: UserAuth;
         if (!auth) {
-            userAuth = new UserAuth(username, '');
+            userAuth = new UserAuth(username, '', Common.uniqueId());
             userAuth.virtual = true;
             await this.authRepository.update(userAuth);
         } else {
@@ -304,7 +304,7 @@ export class AuthService extends BaseService {
             delete existingAuth.virtual;
             auth = await this.authRepository.update(existingAuth);
         } else {
-            auth = await this.authRepository.update(new UserAuth(username, hash));
+            auth = await this.authRepository.update(new UserAuth(username, hash, Common.uniqueId()));
         }
         delete auth.password;
         return new ApiResponse(true, auth);

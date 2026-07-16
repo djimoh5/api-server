@@ -1,5 +1,6 @@
 import 'core-js/es7/reflect';
 import { ReflectiveInjector, Provider, InjectionToken } from 'injection-js';
+import { DeployConfig } from './deploy.config';
 export { Injectable } from 'injection-js';
 
 export function Bootstrap(injectionToken: InjectionToken<any> = null) {
@@ -22,7 +23,7 @@ export function Bootstrap(injectionToken: InjectionToken<any> = null) {
 }
 
 export class Injector {
-    private static injector: { [injectionId: number]: any } = {};
+    private static injector: { [tenantId: string]: ReflectiveInjector } = {};
     private static injectables: any[] = [];
     static disabledAutoBootstrap: boolean = false;
 
@@ -30,15 +31,17 @@ export class Injector {
         this.injectables.push(cls);
     }
 
-    static get<T>(cls: { new(...args: any): T; }, injectionId?: string): T {
-        if(!injectionId) {
-            injectionId = '';
+    static get<T>(cls: { new(...args: any): T; }, tenantId?: string): T {
+        if(!tenantId) {
+            tenantId = '';
         }
         
-        if(!this.injector[injectionId]) {
-            this.injector[injectionId] = ReflectiveInjector.resolveAndCreate(this.injectables);
+        if(!this.injector[tenantId]) {
+            this.injector[tenantId] = ReflectiveInjector.resolveAndCreate(this.injectables);
         }
 
-        return this.injector[injectionId].get(cls);
+        DeployConfig.INJECTED_TENANT_ID = tenantId;
+        return this.injector[tenantId].get(cls);
     }
 }
+

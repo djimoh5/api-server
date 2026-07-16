@@ -9,7 +9,7 @@ export class UserAuth implements BaseModel {
     virtual?: boolean;
     profile?: UserProfile;
 
-    constructor(public username: string, public password: string) {
+    constructor(public username: string, public password: string, public tenantId: uniqueid) {
         this.oid = AuthId(Common.uniqueId());
     }
 }

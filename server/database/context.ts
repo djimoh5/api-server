@@ -5,6 +5,7 @@ import { PaginationModel } from '../../model/shared.model';
 import { uniqueid } from '../../model/id.model';
 import { Common } from '../../utility/common';
 import { Filter } from 'mongodb';
+import { MongoSanitizer } from './mongo-sanitizer';
 
 export class DatabaseContext implements IDatabaseContext {
 	protected collection: Collection;
@@ -49,6 +50,34 @@ export class DatabaseContext implements IDatabaseContext {
 				});
 			}
 		}
+	}
+
+	private setTenant(data: any, isInsert: boolean = false, isRemove: boolean = false) {
+		if (!Common.isNullOrUndefined(this.options.tenantId) && !data._t) {
+			if (isInsert || isRemove || !this.options.searchGlobalObjects) {
+				data.tenantId = this.options.tenantId;
+			}
+			else if (!this.options.searchGlobalObjects || isRemove) {
+				data.tenantId = this.options.tenantId;
+			}
+			else {
+				const tenantOr: any[] = [{ tenantId: this.options.tenantId }, { tenantId: null }];
+				
+				if (data.$or){
+					data.$and = [
+						{ $or: data.$or },
+						{ $or: tenantOr }
+					];
+					
+					delete data.$or;
+				}
+				else {
+					data.$or = tenantOr;
+				}
+			}
+		}
+
+		return data;
 	}
 
 	private async auditLog(query: any, data: DBModel, auditUserId: string): Promise<{ isUpdate: boolean }> {
@@ -107,6 +136,9 @@ export class DatabaseContext implements IDatabaseContext {
 	}
 
 	find(query: Filter<any>, fields?: { [key: string]: 1 | 0 }, operations?: Operations, mapper?: (data: any) => any): Promise<any[]> {
+		MongoSanitizer.blockDangerousOperators(query);
+		this.setTenant(query);
+		
 		return new Promise(async (resolve, reject) => {
 			let cursor = fields ? this.collection.find(query, { projection: fields }) : this.collection.find(query);
 
@@ -130,6 +162,9 @@ export class DatabaseContext implements IDatabaseContext {
 	}
 
 	findOne(query: Filter<any>, fields?: { [key: string]: 1 | 0 }): Promise<any> {
+		MongoSanitizer.blockDangerousOperators(query);
+		this.setTenant(query);
+
 		return new Promise((resolve, reject) => {
 			if (fields) {
 				this.collection.findOne(query, { projection: fields }, (err, doc) => {
@@ -157,6 +192,7 @@ export class DatabaseContext implements IDatabaseContext {
 	}
 
 	insert(data: any, auditUserId: string): Promise<any> {
+		this.setTenant(data, true);
 		this.auditLog(null, data, auditUserId);
 
 		return new Promise((resolve, reject) => {
@@ -168,10 +204,14 @@ export class DatabaseContext implements IDatabaseContext {
 	}
 
 	async update(query: Filter<any>, data: any, auditUserId: string, options?: UpdateOptions): Promise<any> {
+		MongoSanitizer.blockDangerousOperators(query);
+		this.setTenant(query);
+
 		if (options && options.setOnInsert) {
 			options.upsert = true; //always has to be true
 		}
 
+		this.setTenant(data, true);
 		const _u = data._u;
 		const auditResult = await this.auditLog(query, data, auditUserId); //return whether data exists
 
@@ -235,6 +275,8 @@ export class DatabaseContext implements IDatabaseContext {
 	}
 
 	append(query: Filter<any>, data: any, auditUserId: string): Promise<any> {
+		MongoSanitizer.blockDangerousOperators(query);
+		this.setTenant(query);
 		this.auditLog(query, null, auditUserId);
 
 		return new Promise((resolve, reject) => {
@@ -252,6 +294,8 @@ export class DatabaseContext implements IDatabaseContext {
 	}
 
 	pull(query: Filter<any>, data: any, auditUserId: string, options?: UpdateOptions): Promise<any> {
+		MongoSanitizer.blockDangerousOperators(query);
+		this.setTenant(query);
 		this.auditLog(query, null, auditUserId);
 
 		return new Promise((resolve, reject) => {
@@ -269,6 +313,8 @@ export class DatabaseContext implements IDatabaseContext {
 	}
 
 	remove(query: Filter<DBModel>, auditUserId: string): Promise<boolean> {
+		MongoSanitizer.blockDangerousOperators(query);
+		this.setTenant(query, false, true);
 		this.auditLog(query, null, auditUserId);
 
 		return new Promise((resolve, reject) => {
@@ -277,6 +323,9 @@ export class DatabaseContext implements IDatabaseContext {
 	}
 
 	count(query: Filter<any>): Promise<number> {
+		MongoSanitizer.blockDangerousOperators(query);
+		this.setTenant(query);
+
 		return new Promise((resolve, reject) => {
 			this.collection.count(query, (err, count) => this.promiseCallback(resolve, reject, err, count));
 		});
@@ -299,6 +348,9 @@ export class DatabaseContext implements IDatabaseContext {
 	}
 
 	sum(query: Filter<any>, sumField: string, groupByField: string): Promise<{ _id: string, sum: number }[]> {
+		MongoSanitizer.blockDangerousOperators(query);
+		this.setTenant(query);
+		
 		return new Promise(async (resolve, reject) => {
 			const cursor = this.collection.aggregate([{ $match: query }, { $group: { _id: `$${groupByField}`, sum: { $sum: `$${sumField}` } } }]);
 			
@@ -315,6 +367,9 @@ export class DatabaseContext implements IDatabaseContext {
 	}
 
 	max(query: Filter<any>, maxField: string, groupByField: string): Promise<any[]> {
+		MongoSanitizer.blockDangerousOperators(query);
+		this.setTenant(query);
+
 		return new Promise(async (resolve, reject) => {
 			//commented out $max operation as not needed, extra operation provides no benefit since we need entire doc
 			const cursor = this.collection.aggregate([{ $match: query }, { $sort: { [maxField]: -1 } }, { $group: { _id: `$${groupByField}`, /*maxDate: { $max: `$${maxField}` },*/ data: {$first: '$$ROOT'} } }]);
@@ -332,6 +387,9 @@ export class DatabaseContext implements IDatabaseContext {
 	}
 
 	async page(query: Filter<any>, pageNumber: number, pageSize: number, fields?: { [key: string]: 1 | 0 }, mapper?: (data: any) => any, sorter = { _ts: SortOrder.Descending }): Promise<PaginationModel<any>> {
+		MongoSanitizer.blockDangerousOperators(query);
+		this.setTenant(query);
+
 		if (pageNumber === 0){
 			throw new Error('Paging starts at 1');
 		}
@@ -354,6 +412,13 @@ export class DatabaseContext implements IDatabaseContext {
 	}
 
 	distinct(field: string, query: { [key: string]: any }): Promise<any[]> {
+		if (!query) {
+			query = {};
+		}
+
+		MongoSanitizer.blockDangerousOperators(query);
+		this.setTenant(query);
+		
 		return new Promise((resolve, reject) => {
 			this.collection.distinct(field, query, (err, docs) => this.promiseCallback(resolve, reject, err, docs));
 		});

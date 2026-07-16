@@ -1,4 +1,5 @@
 import { User, UserHeaderKey } from '../../model/user.model';
+import { UserAuth } from '../../model/auth.model';
 //import { SessionLogRepository } from '../repository/session-log.repository';
 import { ErrorService } from '../service/error.service';
 
@@ -15,18 +16,22 @@ import { Common } from '../../utility/common';
 const API_SECRET_PRIVATE  = fs.readFileSync(__dirname + '/../config/app_secret_private.pem', 'utf8');
 const API_SECRET_PUBLIC  = fs.readFileSync(__dirname + '/../config/app_secret_public.pem', 'utf8');
 
+import { UAParser } from 'ua-parser-js';
+
 export class Session implements ISession {
     sessionId: string;
 
-    user: User;
-    networkId: string;
+    user: UserAuth;
+    tenantId: string;
     log: SessionLog;
+
+    private userAgent: UAParser.IResult;
 
     private tokenData: SessionTokenData;
 
     private referralSource: string;
     private tokenExpiration: number = 60 * 60 * 24 * 7; //60 min * 24 hours * 7 days = 1 week
-    private tokenExpirationBuffer: number = 900; //15 min
+    private tokenExpirationBuffer: number = this.tokenExpiration - (60 * 60 * 24); //1 day
 
     //private sessionLogRepository: SessionLogRepository;
     protected errorService: ErrorService;
@@ -38,6 +43,9 @@ export class Session implements ISession {
 
         //this.sessionLogRepository = Injector.get(SessionLogRepository);
         this.errorService = Injector.get(ErrorService);
+
+        const userAgent = request.get(UserHeaderKey.UserAgent);
+        this.userAgent = UAParser(userAgent);
 
         this.resume(token);
 
@@ -51,11 +59,12 @@ export class Session implements ISession {
         return Common.uniqueId();
     }
 
-    start(user: User) {
+    start(user: UserAuth) {
+        this.tenantId = user.tenantId;
         this.setTokenExpiration(user);
 
         //set new 90 min token with 5 min buffer so token isn't constantly refreshed
-        const token = Session.setUserToken(user, this.tokenExpiration + this.tokenExpirationBuffer, this.log);
+        const token = Session.setUserToken(user, user.tenantId, this.tokenExpiration + this.tokenExpirationBuffer, this.log);
         this.tokenData = token.data;
         
         this.response.setHeader(UserHeaderKey.Authorization, `Bearer ${user.token}`);
@@ -74,12 +83,13 @@ export class Session implements ISession {
         return this.tokenData && this.tokenData.created;
     }
 
-    static setUserToken(user: User, expiration: number, _log?: SessionLog) {
+    static setUserToken(user: UserAuth, tenantId: string, expiration: number, _log?: SessionLog) {
         delete user.token;
         
         const token: SessionToken = { 
             data: {
                 user: user,
+                tenantId: tenantId,
                 created: Date.now()
             }
         };
@@ -150,9 +160,9 @@ export class Session implements ISession {
     }
 
     private setLogData() {
-        const ip = '123';//this.getIpAddress();
+        const ip = this.getIpAddress();
         //const geo = geoip.lookup(ip); //'218.107.132.66' - CN, '58.64.128.0' - HK
-        this.log = { sid: this.sessionId, uid: this.user && this.user.oid, nid: this.networkId, path: this.request.originalUrl, ip: ip, server: DeployConfig.SERVER, geo: null, userAgent: this.getUserAgentString(), uri: `${this.request.controllerPath}${this.request.urlPath}`, method: this.request.method };//geo };
+        this.log = { sid: this.sessionId, uid: this.user && this.user.oid, tid: this.tenantId, path: this.request.originalUrl, ip: ip, server: DeployConfig.SERVER, geo: null, userAgent: this.getUserAgentString(), uri: `${this.request.controllerPath}${this.request.urlPath}`, method: this.request.method };//geo };
     }
 
     /*private logSession() {
@@ -172,7 +182,7 @@ export class Session implements ISession {
         return this.request.get(UserHeaderKey.UserAgent);
     }
 
-    /*getUserAgent() {
+    getUserAgent() {
         return this.userAgent;
     }
 
@@ -185,7 +195,6 @@ export class Session implements ISession {
             ip: this.log.ip,
             forward: this.request.headers['x-forwarded-for'],
             uid: this.log.uid,
-            aid: this.log.aid || undefined,
             url: this.log.path,
             server: this.log.server,
             userAgent: this.getUserAgent(),
@@ -193,7 +202,7 @@ export class Session implements ISession {
             uiCacheId: this.getCacheVersion() || undefined,
             rateLimiterHeader: this.request.headers[UserHeaderKey.RateLimiter] || undefined,
         }
-    }*/
+    }
 
     private static encryptSessionData(token: SessionToken): string {
         return Crypto.encrypt(JSON.stringify(token.data), Config.APP_API_SECRET);
@@ -221,7 +230,7 @@ export class Session implements ISession {
 export interface SessionLog {
     sid: string; //our unique session ID
     uid: string;
-    nid?: string;
+    tid?: string;
     path: string;
     ip: string;
     server: string;
@@ -237,8 +246,9 @@ export interface SessionToken extends JwtToken {
 }
 
 export interface SessionTokenData { 
-    user: User;
-    created: number
+    user: UserAuth;
+    tenantId: string;
+    created: number;
 }
 
 export interface EncryptedSessionToken extends JwtToken {
@@ -260,7 +270,7 @@ export class RequestUtility {
             let forwardIp: string = <string>request.headers['x-forwarded-for'];
             if (forwardIp) {
                 const ips = forwardIp.split(',');
-                forwardIp = (ips.length > 1 ? ips[ips.length - 2] : ips[0]).trim();
+                forwardIp = (Config.LOAD_BALANCED_REQUEST && ips.length > 1 ? ips[ips.length - 2] : ips[ips.length - 1]).trim();
             }
     
             return forwardIp;

@@ -14,11 +14,11 @@ export interface RepositoryOptions {
 
 export abstract class BaseRepository {
     protected context: IDatabaseContext;
-    protected platformId: number;
+    protected tenantId: string;
     protected contextOptions: IDatabaseContextOptions;
 
     constructor(private collectionName: string, options: RepositoryOptions = {}) {
-        this.platformId = DeployConfig.INJECTED_PLATFORM_ID;
+        this.tenantId = DeployConfig.INJECTED_TENANT_ID;
         this.context = this.createContext(options, collectionName);
     }
 

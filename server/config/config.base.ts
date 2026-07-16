@@ -6,6 +6,7 @@ export class BaseConfig {
     static SERVER_PORT = 8080;
     static REMOTE_SERVER_PORT = 3000;
     static FORCE_ENABLE_CONSOLE_LOG = false;
+    static LOAD_BALANCED_REQUEST = false;
 
     static RUN_TIME: number = null;
     static DATABASE_MAINTENANCE_MODE: boolean = false;
