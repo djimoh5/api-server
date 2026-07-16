@@ -132,3 +132,20 @@ Before running locally, `server/config/` needs:
 
 The `SecretManager` in `server/config/secret-manager.ts` loads these at startup.
 
+## Naming Conventions
+
+| Thing | Convention |
+|---|---|
+| Classes, enums, decorators | PascalCase |
+| Methods, variables | camelCase |
+| Constants | UPPER_SNAKE |
+| File suffixes | `.service.ts`, `.repository.ts`, `.model.ts`, `.utility.ts`, `.workflow.ts` |
+| DB collection names | lowercase letters and underscores only |
+
+## Coding Best Practices
+
+- Backend business logic should live in services, not controllers. Controllers should never call repositories directly.
+
+- All MongoDB collection names defined in repositories should be singular. E.g. do not use "game_records", instead it should be "game_record".
+
+- Repository names should mirror their underlying collection name. However, when using multiple words, MongoDB collections should use underscores, while repository names should use hyphens. E.g. collection name = `user_role` and repository name = `user-role.repository.ts`.

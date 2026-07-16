@@ -3,17 +3,19 @@ import { BaseController, Get, Post, Request, Response, AllowAnonymous, NoAuth } 
 import { Bootstrap, Injectable } from '../config/bootstrap';
 
 import { AuthService } from '../service/auth.service';
+import { S3Service } from '../service/s3.service';
 import { UserProfileService } from '../service/user-profile.service';
 
 import { ApiResponse } from '../../model/shared.model';
 import { UserAuth } from '../../model/auth.model';
 import { AuthId } from '../../model/id.model';
+import { Config } from '../config/config';
 
 @Injectable()
 @Bootstrap()
 @AllowAnonymous()
 export class APIController extends BaseController {
-	constructor(private authService: AuthService, private userProfileService: UserProfileService) {
+	constructor(private authService: AuthService, private userProfileService: UserProfileService, private s3Service: S3Service) {
 		super();
 	}
 
@@ -155,5 +157,11 @@ export class APIController extends BaseController {
 			req.session.start(data.data);
 		}
 		res.send(data);
+	}
+
+	@Get('upload/info')
+	async getUploadInfo(req: Request, res: Response) {
+		const result = this.s3Service.getUploadInfo(Config.S3_BUCKET.DOCUMENTS, '', req.query.filename, req.query.fileType, req.query.isPublic === 'true');
+		this.sendSuccess(res, result);
 	}
 }

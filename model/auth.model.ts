@@ -1,8 +1,9 @@
 import { Common } from "../utility/common";
 import { authid, uniqueid, AuthId } from "./id.model";
+import { BaseModel } from "./shared.model";
 import { UserProfile } from "./user.model";
 
-export class UserAuth {
+export class UserAuth implements BaseModel {
     oid: authid;
     token?: string;
     virtual?: boolean;

@@ -26,6 +26,7 @@ export interface UserSummary {
 export class UserHeaderKey {
     static Authorization: string = 'Authorization';
     static AppAuthorization: string = 'App-Authorization';
+    static ClientId: string = 'Client-ID';
     static EncryptionSecret = 'o9dJ!he#$43r34lwe';
     static UserAgent = 'user-agent';
     static CacheVersionId = 'cache-version';

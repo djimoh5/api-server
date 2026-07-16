@@ -3,7 +3,7 @@ import { ApiService } from './api.service';
 import { AppService } from './app.service';
 import { BaseService, ApiResponse } from './base.service'
 
-import { UserAuth } from 'bundle/model';
+import { UserAuth } from '../../../../model/auth.model';
 
 @Injectable()
 export class AuthService extends BaseService {

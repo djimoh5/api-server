@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { RouterService } from './router.service';
 import { ApiService, ApiTokenService } from './api.service';
 import { AuthService } from './auth.service';
+import { DocumentService } from './document.service';
 
 @NgModule({
     providers: [
@@ -11,7 +12,8 @@ import { AuthService } from './auth.service';
         RouterService,
         ApiService,
         ApiTokenService,
-        AuthService
+        AuthService,
+        DocumentService
     ]
 })
 export class ServiceModule {}

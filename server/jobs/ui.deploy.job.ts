@@ -59,14 +59,7 @@ export class UIDeployJob extends Job {
     }
 
     private async oneTimeDeploy(_bucket: string) {
-        await this.uploadFile('./ui/dist/browser/assets/images/logo_deepblue.svg', 'assets/images/logo_deepblue.svg', _bucket);
         await this.uploadFile('./ui/dist/browser/favicon.ico', 'favicon.ico', _bucket);
-        await this.uploadFile('./ui/dist/browser/assets/images/2f_logo.png', 'assets/images/2f_logo.png', _bucket);
-        await this.uploadFile('./ui/dist/browser/assets/images/2f_logo2.png', 'assets/images/2f_logo2.png', _bucket);
-        await this.uploadFile('./ui/dist/browser/assets/images/bg-poster.png', 'assets/images/bg-poster.png', _bucket);
-        //await this.uploadFile('./ui/dist/browser/assets/images/secondfriday.mp4', 'assets/images/secondfriday.mp4', _bucket);
-        await this.uploadFile('./ui/dist/browser/assets/images/second-friday-bg.mp4', 'assets/images/second-friday-bg.mp4', _bucket);
-        await this.uploadFile('./ui/dist/browser/assets/images/second-friday-logo.png', 'assets/images/second-friday-logo.png', _bucket);
     }
 
     private async deleteFiles(bucket: string, continuationToken?: string) {
